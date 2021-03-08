@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import logging
 
 from flask_rest_jsonapi import ResourceDetail, ResourceList
@@ -64,14 +64,21 @@ class ShiftListResource(ResourceList):
         end_time = data.get('end_time')
 
         try:
-            datetime.strptime(start_time, '%H:%M')
-            datetime.strptime(end_time, '%H:%M')
+            start_time_dt = datetime.datetime.strptime(start_time, '%H:%M')
+            end_time_dt = datetime.datetime.strptime(end_time, '%H:%M')
         except ValueError as e:
             raise BadRequest(
                 detail='Start time or end time value is invalid. Accepted values are 24-hour clock time strings.'
                        'Example: "23:00", "14:00".'
                        f'Exception: {str(e)}.'
             )
+
+        # Add 8 hour constraint per shift
+        if end_time_dt < start_time_dt:
+            end_time_dt += datetime.timedelta(days=1)
+
+        if (end_time_dt - start_time_dt).total_seconds()/3600 != 8:
+            raise BadRequest(detail='Shifts must be exactly 8 hours long')
 
 
 class ShiftResource(ResourceDetail):
@@ -94,8 +101,8 @@ class ShiftResource(ResourceDetail):
         end_time = data.get('end_time')
 
         try:
-            datetime.strptime(start_time, '%H:%M')
-            datetime.strptime(end_time, '%H:%M')
+            datetime.datetime.strptime(start_time, '%H:%M')
+            datetime.datetime.strptime(end_time, '%H:%M')
         except ValueError as e:
             raise BadRequest(
                 detail='Start time or end time value is invalid. Accepted values are 24-hour clock time strings.'
