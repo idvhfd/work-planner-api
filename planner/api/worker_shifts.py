@@ -5,6 +5,7 @@ from flask_rest_jsonapi import ResourceDetail, ResourceList, ResourceRelationshi
 from flask_rest_jsonapi.exceptions import ObjectNotFound, BadRequest
 from marshmallow_jsonapi import fields
 from marshmallow_jsonapi.flask import Schema, Relationship
+from sqlalchemy import func
 
 from planner.app import db
 from planner.models import WorkerShift, Worker, Shift
@@ -21,7 +22,7 @@ class WorkerShiftSchema(Schema):
         strict = True
 
     id = fields.String(dump_only=True)
-    day = fields.DateTime()
+    day = fields.DateTime(format='%Y-%m-%d')
 
     worker = Relationship(
         self_view='api_app.workers_shifts_worker',
@@ -96,14 +97,28 @@ class WorkerShiftListResource(ResourceList):
             raise ObjectNotFound(detail='Shift not found')
 
         day = data.get('day')
-        try:
-            datetime.strptime(day, '%Y-%m-%d')
-        except ValueError as e:
-            raise BadRequest(
-                detail='"day" parameter needs to be a valid date string. Accepted format: "Y-%m-%d".'
-                       'Example: "2021-01-01", "2021-12-05".'
-                       f'Exception: {str(e)}.'
+        if type(day) == str:
+            try:
+                day = datetime.strptime(day, '%Y-%m-%d')
+            except ValueError as e:
+                raise BadRequest(
+                    detail='"day" parameter needs to be a valid date string. Accepted format: "Y-%m-%d".'
+                           'Example: "2021-01-01", "2021-12-05".'
+                           f'Exception: {str(e)}.'
+                )
+
+        # Make sure the worker doesn't have two shifts in the same day
+        worker_shift_count = (
+            db.session.query(
+                func.count(WorkerShift.id),
             )
+            .filter(WorkerShift.worker == worker)
+            .filter(WorkerShift.day == day)
+            .scalar()
+        )
+
+        if worker_shift_count > 0:
+            raise BadRequest(detail='A worker may not have more than one shift per day')
 
         return super().before_post(args, kwargs, data)
 

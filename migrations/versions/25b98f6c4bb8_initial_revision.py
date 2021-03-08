@@ -7,6 +7,7 @@ Create Date: 2021-03-08 02:48:59.123408
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.sql import func
 
 
 # revision identifiers, used by Alembic.
@@ -35,7 +36,7 @@ def upgrade():
     op.create_table(
         'workers_shifts',
         sa.Column('id', sa.BigInteger(), nullable=False),
-        sa.Column('day', sa.TIMESTAMP(timezone=True), nullable=False),
+        sa.Column('day', sa.DateTime(timezone=False), server_default=func.now(), nullable=False),
         sa.Column('worker_id', sa.BigInteger(), nullable=False),
         sa.Column('shift_id', sa.BigInteger(), nullable=False),
         sa.ForeignKeyConstraint(['shift_id'], ['shifts.id'], ondelete='CASCADE'),
