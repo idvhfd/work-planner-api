@@ -22,17 +22,12 @@ def format_date(d: datetime.datetime) -> str:
 @jsonapi_exception_formatter
 def get_shifts_by_day():
     """
-    Helper controller that allows a prospective user to retrieve the number of shifts scheduled in a given timeframe,
-    including workers associated. If no timeframe is given, it defaults to the past 30 days.
+    Helper controller that allows a prospective user to retrieve the number of worker shifts scheduled in a given timeframe.
+    If no timeframe is given, it defaults to the past 30 days.
 
     data = {
-        "01/12": {
-            "count": 10,
-            "list": {
-                "Tom": "9:00 - 13:00",
-                "Gabriel": "13:00 - 0:00"
-            }
-        }
+        "01/12": {"count": 2},
+        "01/13": {"count": 3},
     }
     """
     start_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=30)
