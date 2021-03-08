@@ -18,6 +18,10 @@ Otherwise, run the upgrade script: `python manage.py db upgrade`
 7. Run `setup_for_dev.py` if you wish to input some basic test data.
 8. Run app through either Docker (if you wish to set that up) or through: `FLASK_ENV=development python manage.py run`
 
+## CLI commands:
+A set of CLI commands has been provided to help populate the database. These can be found through the `python manage.py --help` command.
+Please do be mindful that the CLI commands do not utilize the API logic because the data is inserted directly into the DB. This means that any filtering or formatting provided by the API cannot be applied to CLI data.
+
 ## Updating project dependencies:
 The requirements are managed with pip-tools, 
 in order to pin down their versions.
