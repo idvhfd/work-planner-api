@@ -1,0 +1,7 @@
+# This file contains required tools that we need for the build process.
+
+-c requirements.txt
+-c requirements_dev.txt
+
+pip-tools
+tox

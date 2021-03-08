@@ -1,0 +1,20 @@
+# Web
+flask
+
+# Database
+sqlalchemy
+flask-sqlalchemy
+alembic
+flask-migrate
+psycopg2
+
+# Misc
+cryptography
+jsonschema
+ipython
+marshmallow-jsonapi
+pyftpdlib
+
+# flask_rest_jsonapi
+flask-rest-jsonapi
+
