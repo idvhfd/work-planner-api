@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+*.egg-info
+*.db
+env/
+venv/
+.tox/
+.mypy_cache/
+.cache
+dist
+.coverage
+coverage.xml
+htmlcov/
+.idea/
+venv-py/
+venv/
+testresults.xml
